@@ -6,15 +6,16 @@
     <title>抽籤程式</title>
     <style>
       :root {
-        --bg: #f5f7ff;
+        --bg: #f1fdf6;
         --card: #ffffff;
-        --primary: #5b7cff;
-        --primary-dark: #3d60f3;
-        --accent: #ffd166;
-        --text: #1f2937;
-        --muted: #6b7280;
-        --border: #dfe6ff;
-        --success: #2ec27e;
+        --primary: #3bbd8a;
+        --primary-dark: #2ca673;
+        --accent: #d9f7e8;
+        --accent-strong: #8ad6b0;
+        --text: #1d3a2d;
+        --muted: #5f7d70;
+        --border: #d4f3e1;
+        --success: #2f9d63;
       }
 
       * {
@@ -27,16 +28,16 @@
         display: grid;
         place-items: center;
         font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
-        background: linear-gradient(135deg, #eef3ff, #f9f7ff);
+        background: linear-gradient(135deg, #ecfff3, #f8fffb);
         color: var(--text);
       }
 
       .app {
         width: min(92vw, 760px);
-        background: var(--card);
+        background: rgba(255, 255, 255, 0.92);
         border: 1px solid var(--border);
         border-radius: 24px;
-        box-shadow: 0 20px 45px rgba(91, 124, 255, 0.12);
+        box-shadow: 0 20px 45px rgba(59, 189, 138, 0.12);
         padding: 28px;
       }
 
@@ -65,7 +66,7 @@
 
       textarea:focus {
         border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(91, 124, 255, 0.12);
+        box-shadow: 0 0 0 4px rgba(59, 189, 138, 0.12);
       }
 
       .controls {
@@ -123,14 +124,14 @@
       }
 
       .secondary {
-        background: #eef2ff;
+        background: #edfdf4;
         color: var(--text);
       }
 
       .result-box {
         margin-top: 28px;
-        background: linear-gradient(180deg, #fffdf8, #fffaf0);
-        border: 1px solid #f3d589;
+        background: linear-gradient(180deg, #f9fff9, #f2fff8);
+        border: 1px solid #cdeed9;
         border-radius: 18px;
         padding: 18px 20px;
       }
@@ -150,11 +151,12 @@
       }
 
       #resultList li {
-        background: var(--accent);
-        color: #43370d;
+        background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+        color: #1c4e3a;
         border-radius: 999px;
         padding: 10px 16px;
         font-weight: 700;
+        border: 1px solid rgba(47, 157, 99, 0.15);
       }
 
       .message {
