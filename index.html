@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>抽籤程式</title>
+    <style>
+      :root {
+        --bg: #f5f7ff;
+        --card: #ffffff;
+        --primary: #5b7cff;
+        --primary-dark: #3d60f3;
+        --accent: #ffd166;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --border: #dfe6ff;
+        --success: #2ec27e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+        background: linear-gradient(135deg, #eef3ff, #f9f7ff);
+        color: var(--text);
+      }
+
+      .app {
+        width: min(92vw, 760px);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 20px 45px rgba(91, 124, 255, 0.12);
+        padding: 28px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+      }
+
+      .subtitle {
+        margin: 0 0 22px;
+        color: var(--muted);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 220px;
+        resize: vertical;
+        border: 1.5px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        font-size: 1rem;
+        line-height: 1.8;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(91, 124, 255, 0.12);
+      }
+
+      .controls {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      input[type="number"] {
+        width: 110px;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 1rem;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: none;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      .primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .secondary {
+        background: #eef2ff;
+        color: var(--text);
+      }
+
+      .result-box {
+        margin-top: 28px;
+        background: linear-gradient(180deg, #fffdf8, #fffaf0);
+        border: 1px solid #f3d589;
+        border-radius: 18px;
+        padding: 18px 20px;
+      }
+
+      .result-box h2 {
+        margin: 0 0 12px;
+        font-size: 1.3rem;
+      }
+
+      #resultList {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      #resultList li {
+        background: var(--accent);
+        color: #43370d;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-weight: 700;
+      }
+
+      .message {
+        margin-top: 16px;
+        color: var(--success);
+        font-weight: 600;
+      }
+
+      @media (max-width: 560px) {
+        .app {
+          padding: 20px 16px;
+        }
+
+        .controls {
+          align-items: stretch;
+        }
+
+        .buttons {
+          width: 100%;
+        }
+
+        button {
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <h1>抽籤程式</h1>
+      <p class="subtitle">請輸入每一位參加者的名字，每行一個。</p>
+
+      <textarea id="names" placeholder="例如：
+小明
+小華
+阿傑
+美玲"></textarea>
+
+      <div class="controls">
+        <label class="field">
+          抽出人數
+          <input id="count" type="number" min="1" value="1" />
+        </label>
+
+        <div class="buttons">
+          <button id="drawBtn" class="primary">開始抽籤</button>
+          <button id="resetBtn" class="secondary">清除</button>
+        </div>
+      </div>
+
+      <div class="result-box">
+        <h2>中獎名單</h2>
+        <ul id="resultList">
+          <li>尚未抽籤</li>
+        </ul>
+      </div>
+
+      <div id="message" class="message">請輸入姓名後再抽籤</div>
+    </div>
+
+    <script>
+      const namesInput = document.getElementById('names');
+      const drawBtn = document.getElementById('drawBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const resultList = document.getElementById('resultList');
+      const countInput = document.getElementById('count');
+      const message = document.getElementById('message');
+
+      function getNames() {
+        return [...new Set(
+          namesInput.value
+            .split(/\n+/)
+            .map((name) => name.trim())
+            .filter(Boolean)
+        )];
+      }
+
+      function updateStatus(text, type = 'success') {
+        message.textContent = text;
+        message.style.color = type === 'error' ? '#d64a4a' : '#2ec27e';
+      }
+
+      function draw() {
+        const list = getNames();
+        if (list.length === 0) {
+          resultList.innerHTML = '<li>尚未抽籤</li>';
+          updateStatus('請輸入姓名後再抽籤', 'error');
+          return;
+        }
+
+        let drawCount = Number(countInput.value) || 1;
+        drawCount = Math.max(1, Math.min(drawCount, list.length));
+        countInput.value = drawCount;
+
+        const shuffled = [...list].sort(() => Math.random() - 0.5);
+        const winners = shuffled.slice(0, drawCount);
+
+        resultList.innerHTML = winners
+          .map((name, index) => `<li>第 ${index + 1} 名：${name}</li>`)
+          .join('');
+
+        const remaining = list.length - winners.length;
+        updateStatus(
+          remaining > 0
+            ? `已抽出 ${winners.length} 位，還剩 ${remaining} 位未抽到`
+            : '全部參加者已抽完！'
+        );
+      }
+
+      function clearAll() {
+        namesInput.value = '';
+        countInput.value = 1;
+        resultList.innerHTML = '<li>尚未抽籤</li>';
+        updateStatus('請輸入姓名後再抽籤', 'error');
+      }
+
+      drawBtn.addEventListener('click', draw);
+      resetBtn.addEventListener('click', clearAll);
+    </script>
+  </body>
+</html>
