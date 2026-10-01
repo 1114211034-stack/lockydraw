@@ -13,18 +13,27 @@ height: 300px;
 width: 300px;
 background-color: cadetblue;
  }
-@media and  (min-width:751px) {
+
+@media screen and  (min-width:500px) { 
     
     #main{
-        background-color: blueviolet
-        border-radius: 50%;
+        background-color: cornflowerblue;
+        border-radius:0 50%;
     }
+
 }
+
+@media screen and (min-width:751px) {
+      #main{
+        background-color: aqua;
+        border-radius:0 50%;
+      }
+    }
 @media screen and (min-width:1001px) {
  
      #main{
         background-color: brown;
-        border-radius: 50%;
+        border-radius:0 50%;
      }
 
 
@@ -32,6 +41,6 @@ background-color: cadetblue;
 
 </style>
 <body>
-     <div id=main >hello worid</div>
+     <div id=main >hello world</div>
 </body>
 </html>
